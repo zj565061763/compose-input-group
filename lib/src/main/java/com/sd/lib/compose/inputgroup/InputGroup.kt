@@ -39,15 +39,11 @@ fun FInputGroup(
     state: InputGroupState,
     modifier: Modifier = Modifier,
     itemSpace: Dp = 20.dp,
-    itemWidth: Dp = 50.dp,
-    itemHeight: Dp = itemWidth,
-    itemColor: Color = Color(0xFFEEEEEE),
-    itemShape: Shape = RoundedCornerShape(6.dp),
-    style: TextStyle = TextStyle.Default,
     placeholder: String = "●",
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     onFocusRequester: (FocusRequester) -> Unit = { it.requestFocus() },
+    item: @Composable (String) -> Unit = { FInputGroupItem(value = it) },
 ) {
     val onFocusRequesterUpdated by rememberUpdatedState(newValue = onFocusRequester)
     val focusRequester = remember { FocusRequester() }
@@ -76,15 +72,7 @@ fun FInputGroup(
                 val value = state.getIndexValue(index)
                     .takeIf { it.isEmpty() || placeholder.isEmpty() }
                     ?: placeholder
-                ItemView(
-                    value = value,
-                    style = style,
-                    itemColor = itemColor,
-                    itemShape = itemShape,
-                    modifier = Modifier
-                        .width(itemWidth)
-                        .height(itemHeight)
-                )
+                item(value)
             }
         }
     }
@@ -139,15 +127,20 @@ private fun InputView(
 }
 
 @Composable
-private fun ItemView(
+fun FInputGroupItem(
     modifier: Modifier = Modifier,
     value: String,
-    style: TextStyle,
-    itemColor: Color,
-    itemShape: Shape,
+    style: TextStyle = TextStyle.Default,
+    width: Dp = 50.dp,
+    height: Dp = width,
+    color: Color = Color(0xFFEEEEEE),
+    shape: Shape = RoundedCornerShape(6.dp),
 ) {
     Box(
-        modifier = modifier.background(itemColor, itemShape),
+        modifier = modifier
+            .width(width)
+            .height(height)
+            .background(color, shape),
         contentAlignment = Alignment.Center,
     ) {
         BasicText(
